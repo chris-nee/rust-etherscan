@@ -15,10 +15,6 @@ pub fn Header(cx: Scope) -> Element {
                         class: "text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white",
                         Link { to: Route::Home {}, "Home" }
                     }
-                    a {
-                        class: "text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white",
-                        Link { to: Route::Address {address: String::from("")}, "Address" }
-                    }
                 }
             }
         }
