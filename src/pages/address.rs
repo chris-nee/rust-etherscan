@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use std::i64;
 
 // API
 use crate::api::etherscan::{get_transaction_by_hash, TransactionItem};
@@ -6,8 +7,25 @@ use crate::api::etherscan::{get_transaction_by_hash, TransactionItem};
 // Components
 use crate::components::label_and_value::LabelAndValue;
 
+pub fn hex_str_to_dec_str(hex: String) -> String {
+    let without_prefix = hex.trim_start_matches("0x");
+    let z = i64::from_str_radix(without_prefix, 16);
+    z.unwrap().to_string()
+}
+
 #[inline_props]
 pub fn AddressDetails(cx: Scope, details: TransactionItem) -> Element {
+    let gasPriceStr = details.result.gasPrice.clone();
+    let gasPriceStrTrim = gasPriceStr.trim_start_matches("0x");
+    let gasPrice = i64::from_str_radix(gasPriceStrTrim, 16);
+
+    let gasStr = details.result.gas.clone();
+    let gasStrTrim = gasStr.trim_start_matches("0x");
+    let gas = i64::from_str_radix(gasStrTrim, 16);
+
+    let transactionFee = gas.unwrap() * gasPrice.unwrap();
+    let transactionFeeStr = transactionFee.to_string();
+
     render! {
         div {
             class: "font-bold",
@@ -28,9 +46,10 @@ pub fn AddressDetails(cx: Scope, details: TransactionItem) -> Element {
 
         div {
             style: "border-top: solid 1px gray; margin-top: 24px; padding-top: 12px;",
-            LabelAndValue { label: String::from("Value"), value: details.result.value.clone() }
-            LabelAndValue { label: String::from("Transaction Fee"), value: details.result.gas.clone() }
-            LabelAndValue { label: String::from("Gas Price"), value: details.result.gasPrice.clone() }
+            LabelAndValue { label: String::from("Value"), value: hex_str_to_dec_str(details.result.value.clone()) + " wei" }
+            LabelAndValue { label: String::from("Transaction Fee"), value: transactionFeeStr.clone() + " wei" }
+            LabelAndValue { label: String::from("Gas Price"), value: hex_str_to_dec_str(details.result.gasPrice.clone()) + " wei" }
+            LabelAndValue { label: String::from("Gas Usage"), value: hex_str_to_dec_str(details.result.gas.clone()) }
         }
     }
 }
@@ -67,8 +86,8 @@ pub fn Address(cx: Scope, address: Option<String>) -> Element {
                         div {
                             class: "m-auto",
                             div {
-                                class: "border border-gray-500 shadow-md w-4/5 h-60 rounded px-8 py-4",
-                                "style": "min-height: 680px; width: 680px;",
+                                class: "border border-gray-500 shadow-md rounded px-8 py-4",
+                                "style": "min-height: 700px; width: 680px;",
                                 AddressSection { address: add.clone() }
                             }
                         }
