@@ -10,7 +10,7 @@ use crate::api::etherscan::get_ether_last_price;
 use crate::api::etherscan::get_ether_node_count;
 use crate::api::etherscan::get_ether_total_supply;
 
-// Copmonents
+// Components
 use crate::components::custom_button::CustomButton;
 use crate::components::custom_input::CustomInput;
 
@@ -20,17 +20,26 @@ pub fn EtherNodeCountDisplay(cx: Scope) -> Element {
     match etherNodeCountDetails.value() {
         Some(Ok(etherNodeCountRes)) => {
             render! {
-                "{etherNodeCountRes.result.TotalNodeCount}"
+                span {
+                    style: "font-weight: 400;",
+                    "{etherNodeCountRes.result.TotalNodeCount}"
+                }
             }
         }
         Some(Err(err)) => {
             render! {
-                "Error Loading Ether Node Count {err}"
+                span {
+                    style: "font-weight: 400;",
+                    "Error Loading Ether Node Count {err}"
+                }
             }
         }
         _ => {
             render! {
-                "Loading..."
+                span {
+                    style: "font-weight: 400;",
+                    "Loading..."
+                }
             }
         }
     }
@@ -145,7 +154,7 @@ pub fn Dashboard(cx: Scope) -> Element {
                 EtherCountDisplay {}
             }
             div {
-                style: "flex: 1; padding: 24px;",
+                style: "font-weight: 600; flex: 1; padding: 24px;",
                 "Ether Node Count : "
                 EtherNodeCountDisplay {}
             }
