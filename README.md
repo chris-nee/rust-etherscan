@@ -35,6 +35,8 @@ npx tailwindcss -i ./input.css -o ./public/tailwind.css --watch
 dx serve --hot-reload
 ```
 
+3. Visit [localhost:8080](localhost:8080)
+
 ### Build
 
 1. Generate CSS file
