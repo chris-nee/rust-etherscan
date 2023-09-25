@@ -5,21 +5,91 @@ use dioxus_router::prelude::use_navigator;
 use crate::routes::Route;
 
 // API
+use crate::api::etherscan::get_ether2_total_supply;
 use crate::api::etherscan::get_ether_last_price;
+use crate::api::etherscan::get_ether_node_count;
+use crate::api::etherscan::get_ether_total_supply;
 
 // Copmonents
 use crate::components::custom_button::CustomButton;
 use crate::components::custom_input::CustomInput;
 
 #[inline_props]
+pub fn EtherNodeCountDisplay(cx: Scope) -> Element {
+    let etherNodeCountDetails = use_future(cx, (), |_| get_ether_node_count());
+    match etherNodeCountDetails.value() {
+        Some(Ok(etherNodeCountRes)) => {
+            render! {
+                "{etherNodeCountRes.result.TotalNodeCount}"
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                "Error Loading Ether Node Count {err}"
+            }
+        }
+        _ => {
+            render! {
+                "Loading..."
+            }
+        }
+    }
+}
+
+#[inline_props]
+pub fn TotalEther2SupplyDisplay(cx: Scope) -> Element {
+    let ether2SupplyDetails = use_future(cx, (), |_| get_ether2_total_supply());
+    match ether2SupplyDetails.value() {
+        Some(Ok(ether2SupplyRes)) => {
+            render! {
+                "Ether 2 Supply: {ether2SupplyRes.result.Eth2Staking}"
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                "Error Loading Ether 2 Supply {err}"
+            }
+        }
+        _ => {
+            render! {
+                "Loading..."
+            }
+        }
+    }
+}
+
+#[inline_props]
+pub fn TotalEtherSupplyDisplay(cx: Scope) -> Element {
+    let etherSupplyDetails = use_future(cx, (), |_| get_ether_total_supply());
+    match etherSupplyDetails.value() {
+        Some(Ok(etherSupplyRes)) => {
+            render! {
+                "Ether Supply: {etherSupplyRes.result}"
+            }
+        }
+        Some(Err(err)) => {
+            render! {
+                "Error Loading Ether Supply {err}"
+            }
+        }
+        _ => {
+            render! {
+                "Loading..."
+            }
+        }
+    }
+}
+
+#[inline_props]
 pub fn EtherCountDisplay(cx: Scope) -> Element {
     render! {
         div {
+            style: "font-weight: 400;",
             div {
-                "Ether Supply"
+                TotalEtherSupplyDisplay { }
             }
             div {
-                "Ether 2 Supply"
+                TotalEther2SupplyDisplay { }
             }
         }
     }
@@ -33,17 +103,25 @@ pub fn EtherPriceDisplay(cx: Scope) -> Element {
             render! {
                 span {
                     style: "font-weight: 400;",
-                    "{transaction.result.ethusd}"
+                    "$ {transaction.result.ethusd}"
                 }
             }
         }
         Some(Err(err)) => {
             render! {
-                "Error Loading Last Ether Price , {err}"
+                span {
+                    style: "font-weight: 400;",
+                    "Error Loading Last Ether Price , {err}"
+                }
             }
         }
         _ => {
-            render! {"Loading..."}
+            render! {
+                span {
+                    style: "font-weight: 400;",
+                    "Loading..."
+                }
+            }
         }
     }
 }
@@ -55,20 +133,21 @@ pub fn Dashboard(cx: Scope) -> Element {
             class: "border border-gray-500 shadow-md rounded",
             style: "display: flex; text-align: center; height: 340px;",
             div {
-                style: "font-weight: 600; flex-grow: 1; padding: 24px;",
+                style: "font-weight: 600; flex: 1; padding: 24px;",
                 class: "rounded",
                 "Ether Price : "
                 EtherPriceDisplay {}
             }
             div {
-                style: "flex-grow: 1; padding: 24px; border-right: 1px solid gray; border-left: 1px solid gray;",
+                style: "font-weight: 600; flex: 1; padding: 24px; border-right: 1px solid gray; border-left: 1px solid gray;",
                 class: "rounded",
-                "Total Ether Count"
+                "Total Ether Count : "
                 EtherCountDisplay {}
             }
             div {
-                style: "flex-grow: 1; padding: 24px;",
-                "Ether Power"
+                style: "flex: 1; padding: 24px;",
+                "Ether Node Count : "
+                EtherNodeCountDisplay {}
             }
         }
     }

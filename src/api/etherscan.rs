@@ -57,3 +57,62 @@ pub async fn get_ether_last_price() -> Result<EtherLastPriceResponse, reqwest::E
     );
     reqwest::get(&url).await?.json().await
 }
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TotalEtherSupplyResponse {
+    pub status: String,
+    pub message: String,
+    pub result: String,
+}
+
+pub async fn get_ether_total_supply() -> Result<TotalEtherSupplyResponse, reqwest::Error> {
+    let url = format!(
+        "https://api.etherscan.io/api?module=stats&action=ethsupply&apikey={}",
+        ETHERSCAN_API_KEY
+    );
+    reqwest::get(&url).await?.json().await
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TotalEther2SupplyDetails {
+    pub EthSupply: String,
+    pub Eth2Staking: String,
+    pub BurntFees: String,
+    pub WithdrawnTotal: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TotalEther2SupplyResponse {
+    pub status: String,
+    pub message: String,
+    pub result: TotalEther2SupplyDetails,
+}
+
+pub async fn get_ether2_total_supply() -> Result<TotalEther2SupplyResponse, reqwest::Error> {
+    let url = format!(
+        "https://api.etherscan.io/api?module=stats&action=ethsupply2&apikey={}",
+        ETHERSCAN_API_KEY
+    );
+    reqwest::get(&url).await?.json().await
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TotalEtherNodeCountDetails {
+    pub UTCDate: String,
+    pub TotalNodeCount: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TotalEtherNodeCountResponse {
+    pub status: String,
+    pub message: String,
+    pub result: TotalEtherNodeCountDetails,
+}
+
+pub async fn get_ether_node_count() -> Result<TotalEtherNodeCountResponse, reqwest::Error> {
+    let url = format!(
+        "https://api.etherscan.io/api?module=stats&action=nodecount&apikey={}",
+        ETHERSCAN_API_KEY
+    );
+    reqwest::get(&url).await?.json().await
+}
